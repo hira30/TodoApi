@@ -15,6 +15,7 @@ namespace TodoApi.Controllers
     {
         private readonly TodoContext _context;
 
+        // TodoContextクラスをControllerに挿入
         public TodoItemsController(TodoContext context)
         {
             _context = context;
@@ -24,6 +25,7 @@ namespace TodoApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TodoItem>>> GetTodoItems()
         {
+            // DBに存在するToDoデータを全件出力して返す
             return await _context.TodoItems.ToListAsync();
         }
 
@@ -31,6 +33,7 @@ namespace TodoApi.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<TodoItem>> GetTodoItem(long id)
         {
+            // リクエストされたIDとContextクラス内のIDが一致するTodoアイテムを取得
             var todoItem = await _context.TodoItems.FindAsync(id);
 
             if (todoItem == null)
@@ -42,7 +45,6 @@ namespace TodoApi.Controllers
         }
 
         // PUT: api/TodoItems/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutTodoItem(long id, TodoItem todoItem)
         {
@@ -73,13 +75,16 @@ namespace TodoApi.Controllers
         }
 
         // POST: api/TodoItems
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<TodoItem>> PostTodoItem(TodoItem todoItem)
         {
+            // POSTされたデータをContextクラスに追加する
             _context.TodoItems.Add(todoItem);
+
+            // Contextクラスに追加されたデータをDBに登録する（INSERT文が実行される）
             await _context.SaveChangesAsync();
 
+            // ステータスコード201(Created)を返し、GetTodoItemメソッドを呼び出す
             return CreatedAtAction("GetTodoItem", new { id = todoItem.Id }, todoItem);
         }
 
