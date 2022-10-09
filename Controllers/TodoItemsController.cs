@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TodoApi.Models;
 
@@ -59,6 +54,7 @@ namespace TodoApi.Controllers
             {
                 await _context.SaveChangesAsync();
             }
+            // 同時に同じデータが変更された（競合が発生した）場合の例外処理
             catch (DbUpdateConcurrencyException)
             {
                 if (!TodoItemExists(id))
@@ -104,6 +100,11 @@ namespace TodoApi.Controllers
             return NoContent();
         }
 
+        /// <summary>
+        /// Todoアイテムの存在チェック
+        /// </summary>
+        /// <param name="id">TodoアイテムのID</param>
+        /// <returns>存在した場合はtrue</returns>
         private bool TodoItemExists(long id)
         {
             return _context.TodoItems.Any(e => e.Id == id);
